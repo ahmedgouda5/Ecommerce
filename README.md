@@ -1,3 +1,34 @@
+welcome to my projec about Ecommerce display products unsing Api and useing some tool to build this project such as reactjs , tailwind, react-router-dom,Font Awesome , image gallery , swiiper,tanstak,Authantication library like formik ,YUp 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
