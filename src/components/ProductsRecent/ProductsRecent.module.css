@@ -1,0 +1,31 @@
+.icon {
+  color: #deb147;
+}
+
+.border {
+  transition: 0.8s;
+  padding: 15px 10px;
+  border: 1px solid transparent;
+}
+
+.border {
+  border: 1px solid whitesmoke;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+
+  &:hover {
+    border-color: #d3d3d3c2;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.btn {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.border:hover .btn {
+  opacity: 1;
+  transform: scale(1);
+}
