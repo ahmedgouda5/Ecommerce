@@ -50,11 +50,10 @@ export default function Loading() {
           </g>
         </svg>
       </div>
-      <div className="text-center text-gray-500 dark:text-gray-400">
+      <div className="text-center text-luxury-gray">
         <p className="text-lg">Loading...</p>
-        <p className="text-sm">Please wait while we fetch the data.</p> 
-
-    </div>
+        <p className="text-sm">Please wait while we fetch the data.</p>
+      </div>
     </div>
   );
 }

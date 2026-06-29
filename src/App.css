@@ -1,3 +1,40 @@
 .active {
-  color: #0e9f6e !important;
+  color: #CAAA98 !important;
+}
+
+/* Smooth page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+/* Focus visible for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #CAAA98;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Custom scrollbar for horizontal scroll */
+.scroll-thin::-webkit-scrollbar {
+  height: 4px;
+}
+
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: rgba(154, 134, 120, 0.3);
+  border-radius: 2px;
+}
+
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(154, 134, 120, 0.5);
 }

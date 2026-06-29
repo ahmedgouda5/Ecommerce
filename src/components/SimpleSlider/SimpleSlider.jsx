@@ -2,92 +2,77 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
+
 export default function SimpleSlider() {
   const [categories, setCategories] = useState([]);
+
   function getCategory() {
     return axios
       .get("https://ecommerce.routemisr.com/api/v1/categories")
       .then((data) => {
         setCategories(data.data.data);
-        data.data.data;
       })
-      .catch((error) => {
-        setCategories(error);
-        error;
-      });
+      .catch(() => {});
   }
+
   useEffect(() => {
     getCategory();
   }, []);
 
   var settings = {
-    dots: true,
+    dots: false,
     autoplay: true,
     infinite: true,
-    speed: 1000,
+    speed: 800,
     slidesToShow: 7,
     swipeToSlide: true,
-    // slidesToScroll: 1,
+    arrows: false,
     responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          autoplay: true,
-
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          autoplay: true,
-
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: false,
-        },
-      },
+      { breakpoint: 1024, settings: { slidesToShow: 4 } },
+      { breakpoint: 768, settings: { slidesToShow: 3 } },
+      { breakpoint: 480, settings: { slidesToShow: 2 } },
     ],
   };
+
   return (
-    <div className="container mx-auto px-3 md:px-0">
-      <h1 className="font-medium text-3xl pb-7">All Categories</h1>
-      <div>
-        <Slider {...settings} className="md:w-full w-80 md:mx-0 mx-auto ">
-          {categories.map((category) => (
-            <Link key={category?._id} to={`/SubCategories/${category._id}`}>
-              {" "}
-              <div className="px-6">
-                <div className="relative overflow-hidden group cursor-pointer">
-                  <img
-                    className="w-full h-[200px] rounded-md transition-transform duration-500 ease-in-out transform group-hover:scale-110 group-hover:blur-sm group-hover:shadow-2xl"
-                    src={category?.image}
-                    alt={category?.name}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
-                    <h2 className="text-white text-lg font-semibold">
-                      {category?.name}
-                    </h2>
-                  </div>
+    <section className="container-app py-8 md:py-12">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl md:text-2xl font-display font-bold text-white">
+            <span className="text-primary">Shop</span> by Category
+          </h2>
+        </div>
+        <Link
+          to="/Catrgories"
+          className="text-sm font-medium text-primary hover:text-primary-light transition-colors flex items-center gap-1"
+        >
+          View All
+          <i className="fa-solid fa-arrow-right text-xs"></i>
+        </Link>
+      </div>
+
+      <Slider {...settings}>
+        {categories.map((category) => (
+          <div key={category._id} className="px-2">
+            <Link to={`/SubCategories/${category._id}`}>
+              <div className="relative overflow-hidden group cursor-pointer rounded-xl">
+                <img
+                  className="w-full h-[160px] md:h-[180px] object-cover transition-transform duration-500 group-hover:scale-110"
+                  src={category.image}
+                  alt={category.name}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-secondary-900/90 via-secondary-900/30 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <h3 className="text-white text-xs md:text-sm font-semibold truncate">
+                    {category.name}
+                  </h3>
+                  <div className="w-0 group-hover:w-6 h-0.5 bg-primary transition-all duration-500 mt-1"></div>
                 </div>
               </div>
             </Link>
-          ))}
-        </Slider>
-      </div>
-    </div>
+          </div>
+        ))}
+      </Slider>
+    </section>
   );
 }

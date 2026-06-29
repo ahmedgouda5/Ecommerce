@@ -2,120 +2,134 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
 import axios from "axios";
-import Loadingsmall from "../components/Loadingsmall/Loadingsmall";
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function ResetPassword() {
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   function apiResetPassword(valuesReset) {
     return axios
-      .put(
-        "https://ecommerce.routemisr.com/api/v1/auth/resetPassword",
-        valuesReset
-      )
-      .then((data) => {
-        data;
-        toast.success("done");
-        setloading(false);
+      .put("https://ecommerce.routemisr.com/api/v1/auth/resetPassword", valuesReset)
+      .then(() => {
+        toast.success("Password reset successfully!");
+        setLoading(false);
+        navigate("/Login");
       })
-      .catch((error) => {
-        error.response.data.message;
-        setloading(false);
-
-        toast.error("reset code not verified");
+      .catch(() => {
+        setLoading(false);
+        toast.error("Reset failed. Please try again.");
       });
   }
+
   let myschema = Yup.object().shape({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required(" Email Is Required"),
-
+    email: Yup.string().email("Invalid email address").required("Email is required"),
     newPassword: Yup.string()
-      .min("6", "password less than 6 chars")
-      .matches(/[A-Z][a-z0-9]{3,8}/, "Password Not Vaild")
-      .required("Password Is required"),
+      .min(6, "Password must be at least 6 characters")
+      .matches(/[A-Z][a-z0-9]{3,8}/, "Password must start with a capital letter")
+      .required("Password is required"),
   });
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      newPassword: "",
-    },
-    validationSchema: myschema,
-    onSubmit: handleResetPassword,
-  });
-  function handleResetPassword(values) {
-    apiResetPassword(values);
-    setloading(true);
 
-    values;
-  }
+  const formik = useFormik({
+    initialValues: { email: "", newPassword: "" },
+    validationSchema: myschema,
+    onSubmit: (values) => {
+      apiResetPassword(values);
+      setLoading(true);
+    },
+  });
+
   return (
-    <>
-      <form onSubmit={formik.handleSubmit}>
-        <div className="container mx-auto my-12 w-[75%]">
-          <h1 className="font-bold text-2xl ">Change Password</h1>
-          <div className="relative z-0  mb-5 group ">
-            <input
-              type="email"
-              name="email"
-              id="email"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.email}
-              className="block py-2.5  my-10 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 peer"
-              placeholder="Email "
-            />
-            <label
-              htmlFor="email"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-green-600 peer-focus:dark:text-green-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            ></label>
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md animate-fade-in-up">
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-success/10 flex items-center justify-center">
+            <i className="fa-solid fa-lock-open text-success text-xl"></i>
           </div>
-          {formik.touched.email && formik.errors.email ? (
-            <div
-              className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-              role="alert"
-            >
-              <span className="font-medium">{formik.errors.email}</span>
-            </div>
-          ) : (
-            ""
-          )}{" "}
-          <div className="relative z-0  mb-5 group ">
-            <input
-              type="password"
-              name="newPassword"
-              id="newPassword"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.newPassword}
-              className="block py-2.5  my-10 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 peer"
-              placeholder="newPassword "
-            />
-            <label
-              htmlFor="newPassword"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-green-600 peer-focus:dark:text-green-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            ></label>
-          </div>
-          {formik.touched.newPassword && formik.errors.newPassword ? (
-            <div
-              className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-              role="alert"
-            >
-              <span className="font-medium">{formik.errors.newPassword}</span>
-            </div>
-          ) : (
-            ""
-          )}
-          <button
-            disabled={!(formik.isValid && formik.dirty)}
-            type="submit"
-            className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
-          >
-            {loading ? <Loadingsmall /> : " Submit"}
-          </button>
+          <h1 className="text-2xl font-display font-bold text-white mb-2">New Password</h1>
+          <p className="text-sm text-neutral-500">
+            Enter your email and new password
+          </p>
         </div>
-      </form>
-    </>
+
+        <div className="card p-6 md:p-8">
+          <form onSubmit={formik.handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="input-label">Email Address</label>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.email}
+                  placeholder="you@example.com"
+                  className={`input pl-10 ${formik.touched.email && formik.errors.email ? "input-error" : ""}`}
+                />
+                <i className="fa-regular fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 text-sm"></i>
+              </div>
+              {formik.touched.email && formik.errors.email && (
+                <p className="input-error-text">
+                  <i className="fa-solid fa-circle-exclamation text-xs"></i>
+                  {formik.errors.email}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="newPassword" className="input-label">New Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="newPassword"
+                  id="newPassword"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.newPassword}
+                  placeholder="Enter new password"
+                  className={`input pl-10 pr-10 ${formik.touched.newPassword && formik.errors.newPassword ? "input-error" : ""}`}
+                />
+                <i className="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 text-sm"></i>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition-colors"
+                >
+                  <i className={`fa-${showPassword ? "regular" : "solid"} fa-eye${showPassword ? "-slash" : ""} text-sm`}></i>
+                </button>
+              </div>
+              {formik.touched.newPassword && formik.errors.newPassword && (
+                <p className="input-error-text">
+                  <i className="fa-solid fa-circle-exclamation text-xs"></i>
+                  {formik.errors.newPassword}
+                </p>
+              )}
+            </div>
+
+            <button
+              disabled={!(formik.isValid && formik.dirty) || loading}
+              type="submit"
+              className="btn-primary btn-lg w-full"
+            >
+              {loading ? (
+                <><i className="fa-solid fa-spinner fa-spin"></i> Resetting...</>
+              ) : (
+                <><i className="fa-solid fa-check-circle"></i> Reset Password</>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link to="/Login" className="text-sm text-primary hover:text-primary-light transition-colors">
+              <i className="fa-solid fa-arrow-left mr-1"></i>
+              Back to sign in
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -2,92 +2,100 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Loadingsmall from "../Loadingsmall/Loadingsmall";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function ForgetPassword() {
   const navigate = useNavigate();
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   function apiForgetPassword(email) {
     return axios
-      .post(
-        "https://ecommerce.routemisr.com/api/v1/auth/forgotPasswords",
-        email
-      )
+      .post("https://ecommerce.routemisr.com/api/v1/auth/forgotPasswords", email)
       .then((data) => {
-        data;
         toast.success("Reset code sent to your email");
-        setloading(false);
+        setLoading(false);
         navigate("/VerifyCode");
         return data;
       })
       .catch((error) => {
-        error;
-        setloading(false);
+        setLoading(false);
+        toast.error(error.response?.data?.message || "Failed to send reset code");
       });
   }
-  // let { apiForgetPassword } = useContext(PasswordContext);
+
   let myschema = Yup.object().shape({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required(" Email Is Required"),
+    email: Yup.string().email("Invalid email address").required("Email is required"),
   });
+
   const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
+    initialValues: { email: "" },
     validationSchema: myschema,
-    onSubmit: handleForgetPassword,
+    onSubmit: (values) => {
+      apiForgetPassword(values);
+      setLoading(true);
+    },
   });
-  function handleForgetPassword(values) {
-    apiForgetPassword(values);
-    setloading(true);
-    values.email;
-  }
+
   return (
-    <>
-      <form onSubmit={formik.handleSubmit}>
-        <div className="container mx-auto my-12 w-[75%]">
-          {" "}
-          <h1 className="font-bold text-3xl pb-3 ">Reset Password</h1>
-          <h2 className="text-xl ">Enter Your Email To send a reset Code:</h2>
-          <div className="relative z-0  mb-5 group ">
-            <input
-              type="email"
-              name="email"
-              id="email"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.email}
-              className="block py-2.5  my-10 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 peer"
-              placeholder="Enter Your email ...
- "
-            />
-            <label
-              htmlFor="email"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-green-600 peer-focus:dark:text-green-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            ></label>
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md animate-fade-in-up">
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-warning/10 flex items-center justify-center">
+            <i className="fa-solid fa-key text-warning text-xl"></i>
           </div>
-          {formik.touched.email && formik.errors.email ? (
-            <div
-              className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-              role="alert"
-            >
-              <span className="font-medium">{formik.errors.email}</span>
-            </div>
-          ) : (
-            ""
-          )}
-          <button
-            disabled={!(formik.isValid && formik.dirty)}
-            type="submit"
-            className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
-          >
-            {loading ? <Loadingsmall /> : " Send"}
-          </button>
+          <h1 className="text-2xl font-display font-bold text-white mb-2">Reset Password</h1>
+          <p className="text-sm text-neutral-500">
+            Enter your email and we&apos;ll send you a reset code
+          </p>
         </div>
-      </form>
-    </>
+
+        <div className="card p-6 md:p-8">
+          <form onSubmit={formik.handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="input-label">Email Address</label>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.email}
+                  placeholder="you@example.com"
+                  className={`input pl-10 ${formik.touched.email && formik.errors.email ? "input-error" : ""}`}
+                />
+                <i className="fa-regular fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 text-sm"></i>
+              </div>
+              {formik.touched.email && formik.errors.email && (
+                <p className="input-error-text">
+                  <i className="fa-solid fa-circle-exclamation text-xs"></i>
+                  {formik.errors.email}
+                </p>
+              )}
+            </div>
+
+            <button
+              disabled={!(formik.isValid && formik.dirty) || loading}
+              type="submit"
+              className="btn-primary btn-lg w-full"
+            >
+              {loading ? (
+                <><i className="fa-solid fa-spinner fa-spin"></i> Sending...</>
+              ) : (
+                <><i className="fa-solid fa-paper-plane"></i> Send Reset Code</>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link to="/Login" className="text-sm text-primary hover:text-primary-light transition-colors">
+              <i className="fa-solid fa-arrow-left mr-1"></i>
+              Back to sign in
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

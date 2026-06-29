@@ -1,87 +1,77 @@
 import { useContext } from "react";
 import style from "./ProductsRecent.module.css";
 import axios from "axios";
-import Loading from "../Loading/Loading";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { CartContext } from "../../Context/CartContext";
+import { TokenContext } from "../../Context/TokenContext";
+import toast from "react-hot-toast";
+import ProductCard from "./ProductCard";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 export default function ProductsRecent() {
-  let { addProductCart } = useContext(CartContext);
-
   function getProduct() {
     return axios.get("https://ecommerce.routemisr.com/api/v1/products");
   }
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["ProductsRecent"],
     queryFn: getProduct,
   });
 
-  function addToWishList(productId) {
-    return axios
-      .post(
-        "https://ecommerce.routemisr.com/api/v1/wishlist?",
-        { productId },
-        { headers: { token: localStorage.getItem("TokenLokal") } }
-      )
-      .then((data) => data)
-      .catch((error) => error);
-  }
-
-  if (isLoading) {
+  if (error) {
     return (
-      <div className="flex justify-center items-center min-h-[300px]">
-        <Loading />
+      <div className="container-app py-16">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
+            <i className="fa-solid fa-exclamation-triangle text-2xl text-error"></i>
+          </div>
+          <h3 className="text-lg font-semibold text-white mb-2">Something went wrong</h3>
+          <p className="text-sm text-neutral-500">Unable to load products. Please try again later.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-4">
-      {data?.data?.data.map((product) => (
-        <div
-          key={product.id}
-          className="md:w-1/6 p-2 relative transition-transform duration-300 hover:scale-105"
-        >
-          <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col justify-between h-full">
-            <Link to={`/Details/${product.id}`}>
-              <img
-                className="w-full h-48 object-contain p-4"
-                src={product.imageCover}
-                alt={product.name}
-              />
-              <div className="px-4 py-2">
-                <h2 className="text-sm text-green-500 mb-1">{product.category.name}</h2>
-                <p className="font-semibold text-base text-gray-800">
-                  {product.title.split(" ").slice(0, 2).join(" ")}
-                </p>
-                <div className="flex justify-between items-center mt-2">
-                  <p className="text-gray-900 font-bold">{product.price} <span className="text-sm">EGP</span></p>
-                  <p className="flex items-center text-yellow-500 font-medium">
-                    {product.ratingsAverage}
-                    <i className="fa-solid fa-star ml-1"></i>
-                  </p>
-                </div>
-              </div>
-            </Link>
-            <div className="flex justify-between items-center px-4 pb-4 mt-auto">
-              <button
-                onClick={() => addProductCart(product.id)}
-                className="bg-green-500 text-white px-4 py-1 rounded-md text-sm hover:bg-green-600 transition-colors"
-              >
-                + Add
-              </button>
-              <button
-                onClick={() => addToWishList(product.id)}
-                className="text-red-400 hover:text-red-600 transition-colors text-xl"
-              >
-                <i className="fa-solid fa-heart"></i>
-              </button>
-            </div>
-          </div>
+    <div className="container-app py-8">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-white">
+            <span className="text-primary">Featured</span> Products
+          </h2>
+          <p className="text-sm text-neutral-500 mt-1">
+            Discover our handpicked selection of premium products
+          </p>
         </div>
-      ))}
+        <Link
+          to="/Products"
+          className="hidden sm:flex items-center gap-2 text-sm font-medium text-primary hover:text-primary-light transition-colors"
+        >
+          View All
+          <i className="fa-solid fa-arrow-right text-xs"></i>
+        </Link>
+      </div>
+
+      {/* Products Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+        {isLoading
+          ? Array.from({ length: 12 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))
+          : data?.data?.data.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+      </div>
+
+      {/* Mobile View All */}
+      <div className="sm:hidden mt-8 text-center">
+        <Link to="/Products" className="btn-outline btn-md">
+          View All Products
+          <i className="fa-solid fa-arrow-right text-xs"></i>
+        </Link>
+      </div>
     </div>
   );
 }

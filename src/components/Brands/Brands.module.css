@@ -1,8 +1,9 @@
-/* .border {
-  transition: 0.8s;
+.border {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #343D55;
 }
 
 .border:hover {
-  border: 1px solid cyan;
-  box-shadow: 0 0 1px cyan, 0 0 1px cyan, 0 0 1px cyan, 0 0 1px cyan;
-} */
+  border-color: #CAAA98;
+  box-shadow: 0 0 15px rgba(202, 170, 152, 0.2);
+}

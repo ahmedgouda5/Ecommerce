@@ -1,8 +1,8 @@
 .preloader {
 	--hue: 223;
-	--bg: hsl(var(--hue), 10%, 90%);
-	--fg: hsl(var(--hue), 10%, 10%);
-	--primary: hsl(120deg 89.07% 35.88%);
+	--bg: #202940;
+	--fg: #9A8678;
+	--primary: #CAAA98;
 	--trans-dur: 0.3s;
 	font-size: calc(16px + (20 - 16) * (100vw - 320px) / (1280 - 320));
 }
@@ -22,7 +22,6 @@
 	animation: msg 0.3s 13.7s linear forwards;
 	position: absolute;
 	width: 100%;
-
 }
 
 .preloader__msg--last {
@@ -71,23 +70,10 @@
 }
 
 .cart__track {
-	stroke: hsla(var(--hue), 10%, 10%, 0.1);
+	stroke: rgba(154, 134, 120, 0.15);
 	transition: stroke var(--trans-dur);
 }
 
-/* Dark theme */
-@media (prefers-color-scheme: dark) {
-	:root {
-		--bg: hsl(var(--hue), 10%, 10%);
-		--fg: hsl(var(--hue), 10%, 90%);
-	}
-
-	.cart__track {
-		stroke: hsla(var(--hue), 10%, 90%, 0.1);
-	}
-}
-
-/* Animations */
 @keyframes msg {
 	from {
 		opacity: 1;

@@ -1,6 +1,5 @@
 import { RouterProvider, createHashRouter } from "react-router-dom";
 import "./App.css";
-// import Navbar from "./components/Navbar/Navbar";
 import Home from "./components/Home/Home";
 import Cart from "./components/Cart/Cart";
 import Products from "./components/Products/Products";
@@ -24,112 +23,85 @@ import VerifyCode from "./VerifyCode/VerifyCode";
 import ResetPassword from "./ResetPassword/ResetPassword";
 import WishList from "./WishList/WishList";
 import SubCatagories from "./components/SubCatagories/SubCatagories";
-
 import UserContextProvider from "./Context/Usercontext";
+
+const queryClient = new QueryClient();
+
+let routs = createHashRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "Cart",
+        element: (
+          <ProtectedRouts>
+            <Cart />
+          </ProtectedRouts>
+        ),
+      },
+      {
+        path: "Products",
+        element: <Products />,
+      },
+      {
+        path: "Catrgories",
+        element: <Catrgories />,
+      },
+      {
+        path: "SubCategories/:id",
+        element: <SubCatagories />,
+      },
+      {
+        path: "ForgetPassword",
+        element: <ForgetPassword />,
+      },
+      {
+        path: "Brands",
+        element: <Brands />,
+      },
+      {
+        path: "Checkout",
+        element: (
+          <ProtectedRouts>
+            <Checkout />
+          </ProtectedRouts>
+        ),
+      },
+      {
+        path: "WishList",
+        element: (
+          <ProtectedRouts>
+            <WishList />
+          </ProtectedRouts>
+        ),
+      },
+      { path: "Login", element: <Login /> },
+      { path: "Register", element: <Register /> },
+      { path: "VerifyCode", element: <VerifyCode /> },
+      { path: "ResetPassword", element: <ResetPassword /> },
+      {
+        path: "Details/:id",
+        element: <Details />,
+      },
+      {
+        path: "Allorders",
+        element: (
+          <ProtectedRouts>
+            <Allorders />
+          </ProtectedRouts>
+        ),
+      },
+      { path: "*", element: <Notfound /> },
+    ],
+  },
+]);
+
 function App() {
-  let queryClient = new QueryClient();
-
-  let routs = createHashRouter([
-    {
-      path: "/",
-      element: <Layout />,
-      children: [
-        {
-          index: true,
-          element: (
-            <ProtectedRouts>
-              <Home />
-            </ProtectedRouts>
-          ),
-        },
-        {
-          path: "Cart",
-          element: (
-            <ProtectedRouts>
-              <Cart />{" "}
-            </ProtectedRouts>
-          ),
-        },
-
-        {
-          path: "Products",
-          element: (
-            <ProtectedRouts>
-              <Products />
-            </ProtectedRouts>
-          ),
-        },
-        {
-          path: "Catrgories",
-          element: (
-            <ProtectedRouts>
-              <Catrgories /> {/*children */}
-            </ProtectedRouts>
-          ),
-        },
-        {
-          path: "SubCategories/:id",
-          element: (
-            <ProtectedRouts>
-              <SubCatagories />{" "}
-            </ProtectedRouts>
-          ),
-        },
-        {
-          path: "ForgetPassword",
-          element: <ForgetPassword />,
-        },
-        {
-          path: "Brands",
-          element: (
-            <ProtectedRouts>
-              <Brands />
-            </ProtectedRouts>
-          ),
-        },
-        {
-          path: "Checkout",
-          element: (
-            <ProtectedRouts>
-              <Checkout />
-            </ProtectedRouts>
-          ),
-        },
-    ,
-        {
-          path: "WishList",
-          element: (
-            <ProtectedRouts>
-              <WishList />
-            </ProtectedRouts>
-          ),
-        },
-        { path: "Login", element: <Login /> },
-        { path: "Register", element: <Register /> },
-        { path: "VerifyCode", element: <VerifyCode /> },
-        { path: "ResetPassword", element: <ResetPassword /> },
-
-        {
-          path: "Details/:id",
-          element: (
-            <ProtectedRouts>
-              <Details />
-            </ProtectedRouts>
-          ),
-        },
-        {
-          path: "Allorders",
-          element: (
-            <ProtectedRouts>
-              <Allorders />
-            </ProtectedRouts>
-          ),
-        },
-
-        { path: "*", element: <Notfound /> },
-      ],
-    },
-  ]);
   return (
     <>
       <UserContextProvider>

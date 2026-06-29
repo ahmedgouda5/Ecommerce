@@ -1,82 +1,70 @@
-import style from "./Brands.module.css";
 import axios from "axios";
-import Loading from "../Loading/Loading";
-import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 
 export default function Brands() {
-  let { id } = useParams();
-  id;
   function getbrands() {
     return axios.get("https://ecommerce.routemisr.com/api/v1/brands");
   }
-  let { data, isLoading } = useQuery({
+
+  let { data, isLoading, error } = useQuery({
     queryKey: ["brands"],
     queryFn: getbrands,
   });
-  // const [brands, setBrands] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
 
-  // function getBrands() {
-  //   setIsLoading(true);
-
-  //   return axios
-  //     .get("https://ecommerce.routemisr.com/api/v1/brands")
-  //     .then((response) => {
-  //       setIsLoading(false);
-
-  //       setBrands(response.data.data);
-  //     })
-  //     .catch((error) => {
-  //       setIsLoading(false);
-
-  //        (error);
-  //     });
-  // }
-  // useEffect(() => {
-  //   getBrands();
-  // }, []);
-  function specificBrands() {
-    return axios
-      .get(`https://ecommerce.routemisr.com/api/v1/brands/${id}`)
-      .then((data) => {
-        data;
-      })
-      .catch((error) => {
-        error;
-      });
-  }
-
-  if (isLoading)
+  if (error) {
     return (
-      <div className="flex justify-center items-center ">
-        <Loading />
+      <div className="container-app py-16 text-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
+          <i className="fa-solid fa-exclamation-triangle text-2xl text-error"></i>
+        </div>
+        <h3 className="text-lg font-semibold text-white mb-2">Failed to load brands</h3>
+        <p className="text-sm text-neutral-500">Please try again later</p>
       </div>
     );
+  }
+
   return (
-    <>
-      <div className="container mx-auto">
-        {" "}
-        <h2 className=" font-bold py-4 mx-3 text-3xl">All Brands</h2>
-        <div className="flex flex-wrap justify-center">
-          {data?.data.data.map((brand) => (
-            <Link
-              key={brand._id}
-              className={`w-full sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6 2xl:w-1/8 px-4 my-4 ${style.border} overflow-hidden rounded-lg hover:shadow-lg`}
-            >
-              <div className="border-2">
-                <img
-                  src={brand.image}
-                  alt={brand.name}
-                  className="w-full h-auto"
-                  style={{ maxHeight: "150px", objectFit: "contain" }}
-                />
-                <h3 className="text-center py-4">{brand.name}</h3>
-              </div>
-            </Link>
-          ))}
-        </div>
+    <div className="container-app py-8 md:py-12 animate-fade-in">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-8 flex-wrap">
+        <Link to="" className="hover:text-primary transition-colors">Home</Link>
+        <i className="fa-solid fa-chevron-right text-xs text-neutral-700"></i>
+        <span className="text-neutral-300">Brands</span>
+      </nav>
+
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-display font-bold text-white">
+          <span className="text-primary">All</span> Brands
+        </h1>
+        <p className="text-sm text-neutral-500 mt-1">Shop by your favorite brands</p>
       </div>
-    </>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+        {isLoading
+          ? Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="card-hover p-6 text-center">
+                <div className="w-20 h-20 mx-auto mb-3 skeleton rounded-full" />
+                <div className="h-4 w-3/4 mx-auto skeleton rounded" />
+              </div>
+            ))
+          : data?.data.data.map((brand) => (
+              <Link key={brand._id} to={`/Products?brand=${brand._id}`}>
+                <div className="card-hover p-6 text-center group">
+                  <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden bg-secondary-900 border border-neutral-800 group-hover:border-primary/30 transition-colors">
+                    <img
+                      src={brand.image}
+                      alt={brand.name}
+                      className="w-full h-full object-contain p-2"
+                    />
+                  </div>
+                  <h3 className="text-sm font-medium text-neutral-300 group-hover:text-primary transition-colors">
+                    {brand.name}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+      </div>
+    </div>
   );
 }
